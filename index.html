@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Capas GeoServer</title>
+    <link rel="icon" type="image/x-icon" href="https://seeklogo.com/images/U/universidad-andina-simon-bolivar-logo-DE4494615C-seeklogo.com.png">
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Verdana, sans-serif;
+        }
+        h1 {
+            color: red;
+            text-align: center;
+        }
+        img {
+            width: 800px;
+            height: 600px;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Visualizar Capas en GeoServer</h1>
+
+<button onclick="visualizarCapas()">Visualizar Capas</button>
+<img id="map" src="" alt="Mapa">
+
+<h2>Descargar Capa</h2>
+<select id="capas">
+    <option value="Terrazas:PROVINCIA_MURILLO">Provincia Murillo</option>
+    <option value="Terrazas:CENTROS_SALUD">Centros de Salud</option>
+    <option value="Terrazas:VIAS">Vías</option>
+</select>
+
+<select id="formatos">
+    <option value="GML">GML</option>
+    <option value="KML">KML</option>
+    <option value="SHAPE-ZIP">SHP</option>
+</select>
+
+<a id="descargar" href="#" target="_blank">Descargar Capa</a>
+
+<script>
+function visualizarCapas() {
+    const layers = [
+        'Terrazas:PROVINCIA_MURILLO',
+        'Terrazas:CENTROS_SALUD',
+        'Terrazas:VIAS'
+    ];
+    const bbox = '-68.23687958599999,-16.609052040999927,-67.62355013899997,-15.74784221699997';
+    const width = 800;
+    const height = 600;
+
+    const wmsUrl = `https://geoserver.idesinde.com:8443/geoserver/Terrazas/wms?service=WMS&version=1.1.0&request=GetMap&layers=${layers.join(',')}&bbox=${bbox}&width=${width}&height=${height}&srs=EPSG:4326&format=image/png`;
+
+    document.getElementById("map").src = wmsUrl;
+}
+
+document.getElementById('capas').addEventListener('change', actualizarDescarga);
+document.getElementById('formatos').addEventListener('change', actualizarDescarga);
+
+function actualizarDescarga() {
+    const capaSeleccionada = document.getElementById('capas').value;
+    const formatoSeleccionado = document.getElementById('formatos').value;
+
+    const descargaUrl = `https://geoserver.idesinde.com:8443/geoserver/Terrazas/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=${capaSeleccionada}&outputFormat=${formatoSeleccionado}`;
+    document.getElementById('descargar').href = descargaUrl;
+}
+</script>
+
+</body>
+</html>
